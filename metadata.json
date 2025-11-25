@@ -1,0 +1,7 @@
+{
+  "name": "ChromaScale",
+  "description": "An intelligent color scale generator powered by Perceptual Color Spaces (OKLCH) and Gemini AI. Create, stack, and analyze consistent color palettes.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
