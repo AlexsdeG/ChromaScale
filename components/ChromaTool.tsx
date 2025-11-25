@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { generateScale, generateVariant } from '../utils/colorEngine';
+import { formatHex, oklch } from 'culori';
 import { ColorScale, VariantType } from '../types';
 import { ColorRow } from './ColorRow';
 import { ExportModal } from './ExportModal';
 import { extractColorsFromImage, askGeminiFast, generatePaletteFromText, generateVariantWithAI } from '../services/geminiService';
-import { Plus, Wand2, Image as ImageIcon, Loader2, Sparkles, Terminal, UploadCloud, X, Download, Bot, Zap, Undo2 } from 'lucide-react';
+import { Plus, Wand2, Image as ImageIcon, Loader2, Sparkles, Terminal, UploadCloud, X, Download, Bot, Zap, Undo2, Dices } from 'lucide-react';
 
 export const ChromaTool: React.FC = () => {
   const [scales, setScales] = useState<ColorScale[]>([
@@ -55,7 +56,7 @@ export const ChromaTool: React.FC = () => {
   const setUndoAction = (data: { scales: ColorScale[], type: 'single' | 'clear' }) => {
     if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
     setUndoData(data);
-    undoTimerRef.current = setTimeout(() => {
+    undoTimerRef.current = window.setTimeout(() => {
       setUndoData(null);
     }, 5000);
   };
@@ -133,6 +134,21 @@ export const ChromaTool: React.FC = () => {
   const handleExportSingle = (scale: ColorScale) => {
     setExportScales([scale]);
     setShowExport(true);
+  };
+
+  const handleLucky = () => {
+    // Generate 5 random vivid colors
+    const randomScales = Array.from({ length: 5 }).map((_, i) => {
+        // Use OKLCH for uniform brightness/chroma distribution
+        // L: 0.5-0.7 (nice visible midtones), C: 0.15-0.25 (vibrant), H: 0-360
+        const l = 0.5 + Math.random() * 0.2;
+        const c = 0.15 + Math.random() * 0.1;
+        const h = Math.random() * 360;
+        const hex = formatHex({ mode: 'oklch', l, c, h });
+        return generateScale(hex, `Lucky Color ${i + 1}`, 'manual');
+    });
+    setScales(prev => [...randomScales, ...prev]);
+    setAiMessage("Feelin' lucky? Here are 5 random colors!");
   };
 
   // --- Gemini & Image Logic ---
@@ -261,14 +277,23 @@ export const ChromaTool: React.FC = () => {
                     placeholder="Describe a mood, scene, or theme..."
                     className="flex-1 w-full bg-zinc-950/50 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-300 focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/50 outline-none resize-none min-h-[80px]"
                 />
-                <button 
-                    onClick={handleAskAI}
-                    disabled={isProcessing || !aiPrompt.trim()}
-                    className="mt-3 w-full flex justify-center items-center gap-2 px-4 py-2 bg-purple-600/80 hover:bg-purple-600 disabled:bg-zinc-800 disabled:text-zinc-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
-                >
-                    {isProcessing ? <Loader2 className="animate-spin" size={14}/> : <Sparkles size={14}/>}
-                    Generate
-                </button>
+                <div className="flex items-center gap-2 mt-3">
+                    <button 
+                        onClick={handleAskAI}
+                        disabled={isProcessing || !aiPrompt.trim()}
+                        className="flex-1 flex justify-center items-center gap-2 px-4 py-2 bg-purple-600/80 hover:bg-purple-600 disabled:bg-zinc-800 disabled:text-zinc-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
+                    >
+                        {isProcessing ? <Loader2 className="animate-spin" size={14}/> : <Sparkles size={14}/>}
+                        Generate
+                    </button>
+                    <button 
+                        onClick={handleLucky}
+                        className="px-3 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-lg transition-colors border border-zinc-700"
+                        title="I Feel Lucky (Random Colors)"
+                    >
+                        <Dices size={18} />
+                    </button>
+                </div>
             </div>
 
             {/* Card 2: Image Extraction */}

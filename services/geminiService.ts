@@ -115,42 +115,59 @@ export const generatePaletteFromText = async (description: string): Promise<Colo
             contents: `Create a color palette of 5 distinct colors for: "${description}".`,
             config: {
                 responseMimeType: "application/json",
+                // Strict Schema definition ensures we get a JSON object with a 'palette' array
                 responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        palette: {
-                            type: Type.ARRAY,
-                            items: { 
-                                type: Type.OBJECT,
-                                properties: {
-                                    name: { type: Type.STRING },
-                                    hex: { type: Type.STRING }
-                                },
-                                required: ["name", "hex"]
-                            }
-                        }
-                    },
-                    required: ["palette"]
+                  type: Type.OBJECT,
+                  properties: {
+                    palette: {
+                      type: Type.ARRAY,
+                      items: {
+                        type: Type.OBJECT,
+                        properties: {
+                          name: { type: Type.STRING },
+                          hex: { type: Type.STRING }
+                        },
+                        required: ["name", "hex"]
+                      }
+                    }
+                  },
+                  required: ["palette"]
                 }
             }
         });
         
-        const parsed = cleanAndParseJSON(response.text);
+        const text = response.text || "";
+        const parsed = cleanAndParseJSON(text);
         
         if (parsed?.palette && Array.isArray(parsed.palette) && parsed.palette.length > 0) {
             return parsed.palette;
         }
 
-        // --- Fallback Strategy ---
-        // If structured JSON fails, try to regex HEX codes from the raw text.
-        const rawText = response.text || "";
-        const hexMatches = rawText.match(/#[0-9A-Fa-f]{6}/g);
-        
+        // --- Fallback Strategy (in case model ignores schema, though unlikely with 2.5-flash) ---
+        const results: ColorResult[] = [];
+
+        // 1. Try matching "Name: #HEX" or "**Name**: #HEX" patterns
+        // Matches: * **Deep Plum:** `#3A1F4C` or Name: #3A1F4C
+        const richRegex = /(?:^|\s|[*])(?:\*\*)?([^*:]+)(?:\*\*)?:\s*`?(#[0-9A-Fa-f]{6})`?/g;
+        let match;
+        while ((match = richRegex.exec(text)) !== null) {
+            if (match[1] && match[2]) {
+                const name = match[1].replace(/^\*+\s*/, '').trim(); // Clean leading bullets
+                results.push({
+                    name: name,
+                    hex: match[2].toUpperCase()
+                });
+            }
+        }
+
+        if (results.length > 0) return results;
+
+        // 2. Last resort: Just find HEX codes
+        const hexMatches = text.match(/#[0-9A-Fa-f]{6}/g);
         if (hexMatches && hexMatches.length > 0) {
-            // Create generic names for found hexes
             return hexMatches.slice(0, 5).map((hex, i) => ({
                 name: `Palette Color ${i + 1}`,
-                hex: hex
+                hex: hex.toUpperCase()
             }));
         }
 
