@@ -178,10 +178,13 @@ export const ChromaTool: React.FC = () => {
     reader.readAsDataURL(file);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {'image/*': []},
-    multiple: false
+    accept: { 'image/*': [] },
+    multiple: false,
+    onDragEnter: undefined,
+    onDragOver: undefined,
+    onDragLeave: undefined
   });
 
   const handleAskAI = async () => {
