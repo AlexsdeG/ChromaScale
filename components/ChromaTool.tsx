@@ -203,7 +203,7 @@ export const ChromaTool: React.FC = () => {
             lowerPrompt.includes('make') ||
             lowerPrompt.includes('create');
 
-        if (isGenerationRequest) {
+        if (isGenerationRequest || true) {
             const colors = await generatePaletteFromText(aiPrompt);
             if (colors.length > 0) {
                 const newScales = colors.map(c => generateScale(c.hex, c.name, 'ai-palette'));

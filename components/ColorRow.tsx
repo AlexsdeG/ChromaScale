@@ -95,10 +95,10 @@ export const ColorRow: React.FC<ColorRowProps> = ({ scale, onDelete, onBranch, o
   return (
     <div className="group relative bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-sm hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-2 hover:border-zinc-700">
       
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
+      <div className="flex flex-col items-stretch gap-4">
         
         {/* LEFT: Info & Base Color */}
-        <div className="flex lg:flex-col items-center lg:items-start gap-3 lg:gap-1 min-w-[140px]">
+        <div className="flex items-center gap-3 min-w-[140px]">
            <div className="flex items-center gap-3 w-full">
               <div className="relative w-8 h-8 rounded-full shadow-inner ring-1 ring-zinc-700 overflow-hidden shrink-0">
                 <input 
@@ -156,7 +156,7 @@ export const ColorRow: React.FC<ColorRowProps> = ({ scale, onDelete, onBranch, o
         </div>
 
         {/* CENTER: Swatches */}
-        <div className="flex-1 min-w-0 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide">
+        <div className="flex-1 min-w-0 overflow-x-auto pb-2 scrollbar-hide">
            <div className="flex w-full min-w-[600px] rounded-lg overflow-hidden shadow-inner ring-1 ring-zinc-800/50">
             {Object.entries(scale.steps).map(([step, hex]) => (
               <ColorSwatch key={step} step={Number(step)} hex={hex} />
@@ -165,8 +165,8 @@ export const ColorRow: React.FC<ColorRowProps> = ({ scale, onDelete, onBranch, o
         </div>
 
         {/* RIGHT: Actions */}
-        <div className="flex items-center justify-end gap-2 border-t lg:border-t-0 lg:border-l border-zinc-800 pt-2 lg:pt-0 lg:pl-4">
-            
+        <div className="flex items-center justify-end gap-2 border-t border-zinc-800 pt-2">
+                        
             {/* Export Button (Single) */}
             <button
                 onClick={() => onExport(scale)}

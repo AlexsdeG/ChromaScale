@@ -3,13 +3,25 @@ import { GoogleGenAI, Type } from "@google/genai";
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // Using gemini-2.5-flash as it is more stable for JSON tasks than flash-lite
-const FAST_MODEL = 'gemini-2.5-flash';
-const VISION_MODEL = 'gemini-3-pro-preview';
+const FAST_MODEL = 'gemini-flash-lite-latest'; // 'gemini-2.5-flash';
+const VISION_MODEL = 'gemini-flash-lite-latest'; // 'gemini-3-pro-preview';
 
 interface ColorResult {
   name: string;
   hex: string;
 }
+/**
+ * Debug method to list available Gemini models.
+ */
+export const listAvailableModels = async (): Promise<void> => {
+  try {
+    const models = await ai.models.list();
+    console.log("Available models:", models);
+  } catch (error) {
+    console.error("Error listing models:", error);
+  }
+};
+
 
 const cleanAndParseJSON = (text: string | undefined): any => {
     if (!text) return null;
@@ -31,11 +43,32 @@ const cleanAndParseJSON = (text: string | undefined): any => {
     }
 };
 
+const cleanStringAndParseJSON = (text: string | undefined): any => {
+  if(!text) return null;
+  try{
+    // find # hexcolors directly in text and create json array
+    const hexMatches = text.match(/#[0-9A-Fa-f]{6}/g);
+    if(hexMatches && hexMatches.length > 0){
+      const result = hexMatches.map((hex, index) => ({
+        name: `Color ${index + 1}`,
+        hex: hex.toUpperCase()
+      }));
+      return { colors: result };
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
 /**
  * Analyzes an image to extract a dominant color palette using Gemini Pro Vision.
  */
 export const extractColorsFromImage = async (base64Image: string): Promise<ColorResult[]> => {
   try {
+    // Debug list models:
+    // listAvailableModels();
+
     // Detect Mime Type
     const match = base64Image.match(/^data:(image\/[a-zA-Z+]+);base64,/);
     const mimeType = match ? match[1] : 'image/png';
@@ -112,7 +145,7 @@ export const generatePaletteFromText = async (description: string): Promise<Colo
     try {
         const response = await ai.models.generateContent({
             model: FAST_MODEL,
-            contents: `Create a color palette of 5 distinct colors for: "${description}".`,
+            contents: `Create a color palette of 5 distinct colors in hex for: "${description}".`,
             config: {
                 responseMimeType: "application/json",
                 // Strict Schema definition ensures we get a JSON object with a 'palette' array
