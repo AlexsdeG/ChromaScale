@@ -120,3 +120,37 @@ export const getContrastColor = (hex: string): string => {
   const whiteContrast = wcagContrast(hex, '#ffffff');
   return whiteContrast >= 4.5 ? '#ffffff' : '#000000';
 };
+
+export const generateRandomColors = (count: number, baseHex?: string): string[] => {
+  const results: string[] = [];
+  
+  if (baseHex) {
+    const base = oklch(baseHex);
+    if (!base) return Array(count).fill(baseHex);
+
+    // Generate analogous/monochromatic variations around the base
+    for (let i = 0; i < count; i++) {
+      const newColor: Color = { ...base };
+      // Vary Hue slightly (+- 30 degrees)
+      if (newColor.h !== undefined) {
+        newColor.h = (newColor.h + (Math.random() * 60 - 30)) % 360;
+      }
+      // Vary Lightness (+- 0.1) but keep within reasonable bounds
+      newColor.l = Math.max(0.3, Math.min(0.9, newColor.l + (Math.random() * 0.2 - 0.1)));
+      // Vary Chroma (+- 0.05)
+      newColor.c = Math.max(0.05, Math.min(0.3, (newColor.c || 0) + (Math.random() * 0.1 - 0.05)));
+      
+      results.push(formatHex(newColor));
+    }
+  } else {
+    // Completely random
+    for (let i = 0; i < count; i++) {
+      const l = 0.5 + Math.random() * 0.3; // 0.5 - 0.8
+      const c = 0.1 + Math.random() * 0.2; // 0.1 - 0.3
+      const h = Math.random() * 360;
+      results.push(formatHex({ mode: 'oklch', l, c, h }));
+    }
+  }
+  
+  return results;
+};

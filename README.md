@@ -65,10 +65,11 @@
 ```text
 src/
 ├── components/       # UI Components
-│   ├── ChromaTool.tsx    # Main App Logic
-│   ├── ColorRow.tsx      # Individual Scale Row
-│   ├── ColorSwatch.tsx   # Single Color Block
-│   └── ExportModal.tsx   # Code Export UI
+│   ├── ChromaTool.tsx      # Main App Logic
+│   ├── ColorRow.tsx        # Individual Scale Row
+│   ├── ColorSwatch.tsx     # Single Color Block
+│   ├── ExportModal.tsx     # Code Export UI
+│   └── RandomColorPanel.tsx   # Random Color Generation
 ├── services/
 │   └── geminiService.ts  # AI Integration (Text & Vision)
 ├── utils/

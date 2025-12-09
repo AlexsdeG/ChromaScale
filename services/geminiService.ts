@@ -1,6 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const apiKey = process.env.API_KEY;
+export const isAiAvailable = !!apiKey;
+
+const ai = isAiAvailable ? new GoogleGenAI({ apiKey }) : null;
 
 // Using gemini-2.5-flash as it is more stable for JSON tasks than flash-lite
 const FAST_MODEL = 'gemini-flash-lite-latest'; // 'gemini-2.5-flash';
@@ -65,6 +68,7 @@ const cleanStringAndParseJSON = (text: string | undefined): any => {
  * Analyzes an image to extract a dominant color palette using Gemini Pro Vision.
  */
 export const extractColorsFromImage = async (base64Image: string): Promise<ColorResult[]> => {
+  if (!isAiAvailable || !ai) return [];
   try {
     // Debug list models:
     // listAvailableModels();
@@ -123,6 +127,7 @@ export const extractColorsFromImage = async (base64Image: string): Promise<Color
  * Asks Gemini for a quick color suggestion or explanation.
  */
 export const askGeminiFast = async (prompt: string): Promise<string> => {
+  if (!isAiAvailable || !ai) return "AI features are disabled (No API Key found).";
   try {
     const response = await ai.models.generateContent({
       model: FAST_MODEL,
@@ -142,6 +147,7 @@ export const askGeminiFast = async (prompt: string): Promise<string> => {
  * Asks Gemini to generate a palette based on a text description.
  */
 export const generatePaletteFromText = async (description: string): Promise<ColorResult[]> => {
+    if (!isAiAvailable || !ai) return [];
     try {
         const response = await ai.models.generateContent({
             model: FAST_MODEL,
@@ -215,6 +221,7 @@ export const generatePaletteFromText = async (description: string): Promise<Colo
  * Generates a specific variant using AI for better semantic matching.
  */
 export const generateVariantWithAI = async (baseHex: string, type: 'dark' | 'light'): Promise<ColorResult> => {
+  if (!isAiAvailable || !ai) return { name: 'AI Unavailable', hex: baseHex };
   try {
     const prompt = type === 'dark' 
       ? `Create a "Dark Mode" UI background variant of ${baseHex}. It should be dark, desaturated, and have a slight cool hue shift if appropriate.`

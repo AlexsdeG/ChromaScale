@@ -5,8 +5,9 @@ import { formatHex, oklch } from 'culori';
 import { ColorScale, VariantType } from '../types';
 import { ColorRow } from './ColorRow';
 import { ExportModal } from './ExportModal';
-import { extractColorsFromImage, askGeminiFast, generatePaletteFromText, generateVariantWithAI } from '../services/geminiService';
+import { extractColorsFromImage, askGeminiFast, generatePaletteFromText, generateVariantWithAI, isAiAvailable } from '../services/geminiService';
 import { Plus, Wand2, Image as ImageIcon, Loader2, Sparkles, Terminal, UploadCloud, X, Download, Bot, Zap, Undo2, Dices } from 'lucide-react';
+import { RandomColorPanel } from './RandomColorPanel';
 
 export const ChromaTool: React.FC = () => {
   const [scales, setScales] = useState<ColorScale[]>([
@@ -102,9 +103,9 @@ export const ChromaTool: React.FC = () => {
       const parentScale = scales[parentIndex];
       let newBase: string;
       let newName: string;
-      const source = useAiForVariants ? 'ai-variant' : 'algo-variant';
+      const source = (useAiForVariants && isAiAvailable) ? 'ai-variant' : 'algo-variant';
 
-      if (useAiForVariants) {
+      if (useAiForVariants && isAiAvailable) {
         const aiResult = await generateVariantWithAI(parentScale.baseColor, type);
         newBase = aiResult.hex;
         newName = aiResult.name;
@@ -134,6 +135,11 @@ export const ChromaTool: React.FC = () => {
   const handleExportSingle = (scale: ColorScale) => {
     setExportScales([scale]);
     setShowExport(true);
+  };
+
+  const handleRandomGenerate = (colors: string[]) => {
+      const newScales = colors.map((hex, i) => generateScale(hex, `Random Color ${i + 1}`, 'manual'));
+      setScales(prev => [...newScales, ...prev]);
   };
 
   const handleLucky = () => {
@@ -241,6 +247,7 @@ export const ChromaTool: React.FC = () => {
 
           <div className="flex items-center gap-3">
              {/* AI Mode Toggle */}
+             {isAiAvailable && (
              <button 
                onClick={() => setUseAiForVariants(!useAiForVariants)}
                className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${useAiForVariants ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-300' : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700'}`}
@@ -249,6 +256,7 @@ export const ChromaTool: React.FC = () => {
                {useAiForVariants ? <Bot size={14} /> : <Zap size={14} />}
                {useAiForVariants ? 'AI Variants On' : 'Algo Variants'}
              </button>
+             )}
 
              {/* Export Button */}
              <button 
@@ -268,6 +276,7 @@ export const ChromaTool: React.FC = () => {
         <section className="mb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
             {/* Card 1: AI Generator */}
+            {isAiAvailable && (
             <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-5 relative overflow-hidden group hover:border-purple-500/30 transition-colors flex flex-col">
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 blur-3xl rounded-full pointer-events-none"></div>
                 <h2 className="text-base font-semibold mb-3 flex items-center gap-2 text-zinc-200">
@@ -298,8 +307,10 @@ export const ChromaTool: React.FC = () => {
                     </button>
                 </div>
             </div>
+            )}
 
             {/* Card 2: Image Extraction */}
+            {isAiAvailable && (
             <div 
                 {...getRootProps()}
                 className={`
@@ -314,6 +325,10 @@ export const ChromaTool: React.FC = () => {
                 <h2 className="text-sm font-semibold text-zinc-200">Drop Image Here</h2>
                 <p className="text-xs text-zinc-500 mt-1">Extracts dominant & accent colors</p>
             </div>
+            )}
+
+            {/* Random Color Panel */}
+            <RandomColorPanel onGenerate={handleRandomGenerate} />
 
             {/* Card 3: Manual Entry */}
             <div className="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-5 flex flex-col justify-center gap-4 hover:border-zinc-700 transition-colors">
