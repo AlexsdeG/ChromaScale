@@ -2,7 +2,7 @@
 
 **ChromaScale** is an intelligent color system builder designed for modern UI/UX workflows. It combines the perceptual accuracy of the **OKLCH** color space with the semantic understanding of **Google Gemini AI** to help developers and designers create consistent, accessible, and beautiful color stacks.
 
-![App Screenshot](https://via.placeholder.com/1200x600.png?text=ChromaScale+Interface)
+![App Screenshot](https://github.com/AlexsdeG/ChromaScale/blob/main/ChromaScale.png)
 
 ## ✨ Features
 
