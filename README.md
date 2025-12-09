@@ -1,20 +1,20 @@
 # 🎨 ChromaScale
 
-**ChromaScale** is an intelligent color system builder designed for modern UI/UX workflows. It combines the perceptual accuracy of the **OKLCH** color space with the semantic understanding of **Google Gemini AI** to help developers and designers create consistent, accessible, and beautiful color stacks.
+**ChromaScale** is an color system builder designed for modern UI/UX workflows. Create in the **OKLCH** color space easy color scales from 50 to 950. All AI features is fully optional.
 
 ![App Screenshot](https://github.com/AlexsdeG/ChromaScale/blob/main/ChromaScale.png)
 
 ## ✨ Features
 
-### 🧠 AI-Powered Intelligence
-*   **Text-to-Palette:** Describe a mood ("cyberpunk neon city"), scene, or theme, and Gemini generates a structured 5-color palette.
-*   **Smart Variants:** Ask AI to generate "Dark Mode" or "High Contrast" versions of your colors. It understands nuance (e.g., shifting hue towards blue for dark mode backgrounds).
-*   **Image Extraction:** Drag and drop any image to extract dominant and accent colors using Gemini Vision.
-
 ### 📐 Precision Color Math
 *   **OKLCH Interpolation:** Generates smooth, perceptually uniform scales (50-950) that look natural to the human eye.
 *   **Smart Snapping:** Input a color, and the engine calculates its luminance to lock it to the correct step (e.g., 500 or 900) before generating the rest of the scale.
 *   **Accessible by Default:** Automatic contrast calculation for text overlays.
+*   
+### 🧠 (Optional) AI-Powered Intelligence
+*   **Text-to-Palette:** Describe a mood ("cyberpunk neon city"), scene, or theme, and Gemini generates a structured 5-color palette.
+*   **Smart Variants:** Ask AI to generate "Dark Mode" or "High Contrast" versions of your colors. It understands nuance (e.g., shifting hue towards blue for dark mode backgrounds).
+*   **Image Extraction:** Drag and drop any image to extract dominant and accent colors using Gemini Vision.
 
 ### 🛠️ Developer Workflow
 *   **Stack Management:** Create multiple independent color rows.
@@ -49,7 +49,7 @@
     ```
 
 3.  **Configure API Key**
-    Create a `.env` file in the root directory and add your Google Gemini API key:
+    (Optional) Create a `.env` file in the root directory and add your Google Gemini API key:
     ```env
     VITE_GEMINI_API_KEY=your_api_key_here
     ```
