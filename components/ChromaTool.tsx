@@ -239,9 +239,7 @@ export const ChromaTool: React.FC = () => {
       <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
-              <span className="font-bold text-white text-lg">C</span>
-            </div>
+            <img src="/favicon.png" alt="ChromaScale Logo" className="w-8 h-8 rounded-lg shadow-lg shadow-indigo-500/20" />
             <h1 className="text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-400">ChromaScale</h1>
           </div>
 
