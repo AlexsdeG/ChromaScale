@@ -1,10 +1,12 @@
 # 🎨 ChromaScale
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Click_Here-blue?style=for-the-badge)](https://chromascale.pro-grammer.de/)
+
 **ChromaScale** is an color system builder designed for modern UI/UX workflows. Create in the **OKLCH** color space easy color scales from 50 to 950. All AI features is fully optional.
 
 ![App Screenshot](https://github.com/AlexsdeG/ChromaScale/blob/main/ChromaScale.png)
 
-## ✨ Features
+## ✨ Features **([Demo](https://chromascale.pro-grammer.de/))**
 
 ### 📐 Precision Color Math
 *   **OKLCH Interpolation:** Generates smooth, perceptually uniform scales (50-950) that look natural to the human eye.
