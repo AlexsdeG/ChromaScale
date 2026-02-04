@@ -1,7 +1,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const apiKey = process.env.API_KEY;
-export const isAiAvailable = !!apiKey;
+const apiKey = process.env.VITE_GEMINI_API_KEY;
+export const isAiAvailable = !!apiKey && apiKey !== 'undefined' && apiKey.length > 0;
+
 
 const ai = isAiAvailable ? new GoogleGenAI({ apiKey }) : null;
 
